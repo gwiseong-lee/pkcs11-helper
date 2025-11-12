@@ -1,3 +1,52 @@
+윈도우 빌드 성공 
+nmake 이용
+1. 소스 다운로드
+2. 다운로드한 위치로 폴더 변경
+cd G:\gProject\pkcs11-helper\lib>
+3. 윈도우 빌드 파일 변경
+리눅스에서 config하면 나오는 설정 파일들을 수동으로 만들어 준다.
+다른 빌드에서는 config 하면 만들어졌던거 같던데 일단 수동으로 해서 성공을 했으니 작성 한다.
+3.1 copy Makefile.w32-vc Makefile.vc
+3.2 이 파일도 열어서 수정
+#
+# If you wish openssl interface
+# Provide OPENSSL=1 OPENSSL_HOME=<location> as nmake argument.
+#
+OPENSSL=1
+!ifdef OPENSSL
+!ifndef OPENSSL_HOME
+#OPENSSL_HOME = ..\..\openssl
+!endif
+!endif
+수정 완료
+
+3.3 copy versioninfo.rc.in versioninfo.rc
+3.4 파일 열어서 직접 버전 정보 바꾸기 : pkcs11h-version.h
+위치: pkcs11-helper\include\pkcs11-helper-1.0\pkcs11h-version.h
+#ifndef PKCS11H_VERSION_H
+#define PKCS11H_VERSION_H
+
+#define PKCS11H_VERSION "1.31.0"
+
+#endif /* PKCS11H_VERSION_H */
+
+openssl 정보를 빌드에 포함 시켜야 한다.
+
+4. 실행
+nmake -f Makefile.vc ^
+  OPENSSL_DIR="C:\openssl-3.0.18" ^
+  OPENSSL_INC="C:\openssl-3.0.18\include" ^
+  OPENSSL_LIBS="C:\openssl-3.0.18\lib\libssl.lib C:\openssl-3.0.18\lib\libcrypto.lib"
+
+한번 빌드 후 링크 에러가 나면
+pkcs11-helper-1.dll.def에 내용을 추가 해 주었다.
+pkcs11h_openssl_freeSession
+pkcs11h_openssl_createSession
+pkcs11h_openssl_session_getX509
+pkcs11h_openssl_getX509
+pkcs11h_openssl_session_getEVP
+
+
 pkcs11-helper -- PKCS#11 simplification.
 
 Copyright (c) 2005-2018 Alon Bar-Lev <alon.barlev@gmail.com>
